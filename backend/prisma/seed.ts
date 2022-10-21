@@ -1,13 +1,16 @@
-import { PrismaClient, user } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker'
 
 const prisma = new PrismaClient()
 const currentDate = new Date()
 
+const UserId = 'a169841b-b90d-49c6-9f58-f5c754829241'
+
 const createUsers = async (): Promise<{ count: number }> =>
   prisma.user.createMany({
     data: [
       {
+        id: UserId,
         email: 'user@gmail.com',
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
@@ -28,10 +31,25 @@ const createUsers = async (): Promise<{ count: number }> =>
     ],
   })
 
+const createMessages = async (): Promise<{ count: number }> =>
+  prisma.message.createMany({
+    data: [
+      {
+        userId: UserId,
+        content: 'This is my first message',
+      },
+      {
+        userId: UserId,
+        content: 'This is my second message',
+      },
+    ],
+  })
+
 const main = async (): Promise<string> => {
   await prisma.$connect()
 
   await createUsers()
+  await createMessages()
 
   return 'Db has been seeded'
 }
