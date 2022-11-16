@@ -6,8 +6,9 @@ import { Message, MessageCreateInput } from '../Application/message.gql'
 export class MessageService {
   constructor(private prisma: PrismaService) {}
 
-  async findMessages(): Promise<Message[]> {
+  async findMessages(orderBy?: any[]): Promise<Message[]> {
     return this.prisma.message.findMany({
+      orderBy,
       include: {
         user: {
           select: {

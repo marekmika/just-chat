@@ -18,16 +18,18 @@ export class ChatService {
       await this.authenticationService.getUserFromAuthenticationToken(
         authorization,
       )
+
     if (!user) {
       throw new WsException('Invalid credentials.')
     }
+
     return user
   }
 
   async getAllMessages(socket: Socket) {
     await this.getUserFromSocket(socket)
 
-    return this.messageService.findMessages()
+    return this.messageService.findMessages([{ createdAt: 'asc' }])
   }
 
   async createMessage(socket: Socket, content: string) {
