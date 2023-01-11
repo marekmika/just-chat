@@ -10,6 +10,7 @@ export class AuthenticationService {
 
   public async getUserFromAuthenticationToken(token: string) {
     const payload: any = jwt.verify(token, secret)
+
     if (payload.id) {
       return this.usersService.user({ id: payload.id })
     }

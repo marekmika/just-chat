@@ -9,7 +9,11 @@ import {
 import { Server, Socket } from 'socket.io'
 import { ChatService } from '../Domain/chat.service'
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+  },
+})
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server
@@ -30,13 +34,29 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() message: string,
     @ConnectedSocket() socket: Socket,
   ) {
-    const author = await this.chatService.getUserFromSocket(socket)
+    const {
+      email,
+      firstName,
+      lastName,
+      id: userId,
+    } = await this.chatService.getUserFromSocket(socket)
 
-    await this.chatService.createMessage(socket, message)
+    const { id, content, createdAt, updatedAt } =
+      await this.chatService.createMessage(userId, message)
 
     return this.server.sockets.emit('receive_message', {
-      message,
-      author,
+      message: {
+        id,
+        createdAt,
+        updatedAt,
+        userId,
+        content,
+      },
+      user: {
+        email,
+        firstName,
+        lastName,
+      },
     })
   }
 }

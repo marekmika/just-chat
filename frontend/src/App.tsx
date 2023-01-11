@@ -2,17 +2,13 @@ import { For } from 'solid-js';
 import type { Component } from 'solid-js';
 import { Routes, Route } from '@solidjs/router';
 import pages from './pages';
-import { createClient, Provider } from 'solid-urql';
 
 import styles from './App.module.css';
+import AclProvider from './AclProvider';
 
 const App: Component = () => {
-	const client = createClient({
-		url: import.meta.env.VITE_FRONTED_API,
-	});
-
 	return (
-		<Provider value={client}>
+		<AclProvider>
 			<div class={styles.App}>
 				<Routes>
 					<For each={pages} fallback={<div>Not found</div>}>
@@ -22,7 +18,7 @@ const App: Component = () => {
 					</For>
 				</Routes>
 			</div>
-		</Provider>
+		</AclProvider>
 	);
 };
 

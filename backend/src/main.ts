@@ -12,7 +12,8 @@ async function bootstrap() {
 
   if (process.env.APP_ENV === 'develop') app.enableCors()
 
-  await app.listen(process.env.BE_URL_PORT || 4000)
-  console.log(`> App started http://localhost:${port}`)
+  await app.listen(port)
+  console.log(`> App started: ${await app.getUrl()}`)
 }
+
 bootstrap()

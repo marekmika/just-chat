@@ -11,7 +11,17 @@ export class Message {
 
   @Field()
   content: string
+
+  @Field()
+  createdAt: Date
+
+  @Field()
+  updatedAt: Date
 }
 
 @InputType()
-export class MessageCreateInput extends OmitType(Message, ['id'], InputType) {}
+export class MessageCreateInput extends OmitType(
+  Message,
+  ['id', 'createdAt', 'updatedAt'],
+  InputType,
+) {}

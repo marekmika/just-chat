@@ -1,19 +1,26 @@
 import { Component } from 'solid-js';
 import { useField } from 'solid-js-form';
 
-const Input: Component<{ name: string; label: string }> = (props) => {
-	const { field, form } = useField(props.name);
+type Props = {
+	name: string;
+	label: string;
+	type?: string;
+};
+
+const Input: Component<Props> = ({ name, label, type }) => {
+	const { field, form } = useField(name);
 	const formHandler = form.formHandler;
 
 	return (
 		<div>
-			<label for={props.name}>
-				{props.label}
+			<label for={name}>
+				{label}
 				{field.required() ? ' *' : ''}
 			</label>
 			<input
-				name={props.name}
+				name={name}
 				value={field.value() as string}
+				type={type}
 				//@ts-ignore
 				use:formHandler //still need to properly type the handler
 			/>

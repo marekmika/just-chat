@@ -32,9 +32,16 @@ export class UserResolver {
     return { id, email: userEmail, token }
   }
 
-  @Mutation(() => User)
-  async register(@Args('userData') userData: UserRegisterInput): Promise<User> {
-    return this.userService.createUser(userData)
+  @Mutation(() => UserLogin)
+  async register(
+    @Args('userData') userData: UserRegisterInput,
+  ): Promise<UserLogin> {
+    // Due to not using email provider the registration is automatic
+    const { id, email } = await this.userService.createUser(userData)
+
+    const token = jwt.sign({ id, email }, secret)
+
+    return { id, email, token }
   }
 
   @Mutation(() => Boolean)

@@ -1,3 +1,3 @@
-import Registration from './Registration';
+import RegistrationContainer from './RegistrationContainer';
 
-export default Registration;
+export default RegistrationContainer;

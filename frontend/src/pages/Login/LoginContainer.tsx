@@ -1,38 +1,46 @@
-import type { Component, createMemo } from 'solid-js';
-import { createQuery, useClient } from 'solid-urql';
+import { Component, createEffect, createSignal, onMount, Show } from 'solid-js';
+import useRedux from '../../store/useRedux';
+import reduxStore from '../../store/store';
 import Login from './Login';
+import actions from '../../store/actions';
+import loginQuery from '../../queries/login';
+import { createGraphQLClient } from '@solid-primitives/graphql';
+import { Navigate } from '@solidjs/router';
 
-const LoginQuery = /* gql */ `
-    query login($email: String!, $password: String!){
-        login(email: $email, password: $password) {
-            id
-            email
-            token
-        }
-  }`;
+const query = createGraphQLClient(import.meta.env.VITE_FRONTED_API);
 
 const LoginContainer: Component = () => {
-	const handleLogin = async (email: string, password: string) => {
-		const [resultQuery, queryState] = createQuery({
-			query: LoginQuery,
-			variables: {
-				email,
-				password,
-			},
-			context: {
-				url: import.meta.env.VITE_FRONTED_API,
-			},
-		});
+	const [store, { login }] = useRedux(reduxStore, actions);
+	const [queryVars, setQueryVars] = createSignal<boolean | object>(false);
+	const [data] = query(loginQuery, () => queryVars());
 
-		if (queryState()?.error) {
-			// TODO: Handle error
+	const onLogin = async (email: string, password: string) => {
+		setQueryVars({ email, password });
+	};
+
+	createEffect(() => {
+		let loginQueryResult;
+
+		try {
+			loginQueryResult = data();
+		} catch (error) {
+			console.log('🚀 ~ createEffect ~ error', error);
+		}
+
+		if (typeof loginQueryResult === 'undefined') {
 			return;
 		}
 
-		window.localStorage.setItem('sessionToken', resultQuery()?.login?.token);
-	};
+		window.localStorage.setItem('jwtToken', loginQueryResult?.login.token);
 
-	return <Login onLogin={handleLogin} />;
+		login(loginQueryResult?.login);
+	});
+
+	return (
+		<Show when={store.user === undefined} fallback={<Navigate href='/' />}>
+			<Login onLogin={onLogin} />;
+		</Show>
+	);
 };
 
 export default LoginContainer;

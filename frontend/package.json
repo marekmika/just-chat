@@ -15,12 +15,14 @@
     "vite-plugin-solid": "^2.3.0"
   },
   "dependencies": {
+    "@solid-primitives/graphql": "^1.5.0",
     "@solidjs/router": "^0.5.0",
     "@urql/core": "^3.0.5",
     "graphql": "^16.6.0",
+    "redux": "^4.2.0",
+    "socket.io-client": "^4.5.4",
     "solid-js": "^1.5.1",
     "solid-js-form": "^0.1.5",
-    "solid-urql": "^0.2.0",
     "yup": "^0.32.11"
   }
 }

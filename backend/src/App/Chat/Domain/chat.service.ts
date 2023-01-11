@@ -3,6 +3,7 @@ import { Socket } from 'socket.io'
 import { WsException } from '@nestjs/websockets'
 import { AuthenticationService } from '@src/App/Auth/authentication.service'
 import { MessageService } from '@src/App/Message/Domain/message.service'
+import { User } from '@src/App/User/Application/user.gql'
 
 @Injectable()
 export class ChatService {
@@ -12,12 +13,14 @@ export class ChatService {
   ) {}
 
   async getUserFromSocket(socket: Socket) {
-    const { authorization } = socket.handshake.headers
+    const { token } = socket.handshake.auth
+
+    if (!token) {
+      return
+    }
 
     const user =
-      await this.authenticationService.getUserFromAuthenticationToken(
-        authorization,
-      )
+      await this.authenticationService.getUserFromAuthenticationToken(token)
 
     if (!user) {
       throw new WsException('Invalid credentials.')
@@ -32,9 +35,7 @@ export class ChatService {
     return this.messageService.findMessages([{ createdAt: 'asc' }])
   }
 
-  async createMessage(socket: Socket, content: string) {
-    const user = await this.getUserFromSocket(socket)
-
-    return this.messageService.createMessage({ userId: user.id, content })
+  async createMessage(userId: User['id'], content: string) {
+    return this.messageService.createMessage({ userId, content })
   }
 }
