@@ -38,8 +38,8 @@ const HomepageContainer: Component = () => {
 	createEffect(() => {
 		socket()?.on('receive_message', (data) => {
 			setMessages((currentMessages) => [
-				{ ...data.message, user: data.user },
 				...currentMessages,
+				{ ...data.message, user: data.user },
 			]);
 		});
 	});

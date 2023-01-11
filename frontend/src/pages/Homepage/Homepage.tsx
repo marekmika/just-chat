@@ -21,11 +21,11 @@ type Props = {
 	onSendMessage: (message: string) => Promise<void>;
 };
 
-const Homepage: Component<Props> = ({ messages, onSendMessage }) => {
+const Homepage: Component<Props> = (props) => {
 	return (
 		<div>
 			<h1>Just-chat</h1>
-			<For each={messages} fallback={<div>Loading...</div>}>
+			<For each={props.messages} fallback={<div>Loading...</div>}>
 				{(message) => (
 					<>
 						<div>
@@ -52,7 +52,7 @@ const Homepage: Component<Props> = ({ messages, onSendMessage }) => {
 					}}
 					onSubmit={async (form) => {
 						try {
-							await onSendMessage(form.values.message);
+							await props.onSendMessage(form.values.message);
 						} catch (err) {
 							console.log('🚀 ~ onSubmit={ ~ err', err);
 						}
