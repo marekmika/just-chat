@@ -23,6 +23,10 @@
     "socket.io-client": "^4.5.4",
     "solid-js": "^1.6.8",
     "solid-js-form": "^0.1.5",
+    "solid-styled-components": "^0.28.5",
     "yup": "^0.32.11"
   }
 }
+
+
+// Graphql generator of types

@@ -3,13 +3,18 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	onMount,
 	Show,
 } from 'solid-js';
 import Homepage, { Message } from './Homepage';
-import { useNavigate } from '@solidjs/router';
+import { Navigate, useNavigate } from '@solidjs/router';
 import { io } from 'socket.io-client';
+import useRedux from '../../store/useRedux';
+import reduxStore from '../../store/store';
+import actions from '../../store/actions';
 
 const HomepageContainer: Component = () => {
+	const [store] = useRedux(reduxStore, actions);
 	const [messages, setMessages] = createSignal<Message[]>([]);
 	const navigate = useNavigate();
 
@@ -49,8 +54,10 @@ const HomepageContainer: Component = () => {
 	};
 
 	return (
-		<Show when={messages()?.length} fallback={<div>Loading...</div>}>
-			<Homepage messages={messages()} onSendMessage={sendMessage} />
+		<Show when={store.user} fallback={<Navigate href='/login' />}>
+			<Show when={messages()?.length} fallback={<div>Loading...</div>}>
+				<Homepage messages={messages()} onSendMessage={sendMessage} />
+			</Show>
 		</Show>
 	);
 };

@@ -1,7 +1,8 @@
-import { Component, For } from 'solid-js';
+import { Component, For, onMount, createEffect } from 'solid-js';
 import { Form } from 'solid-js-form';
 import { string } from 'yup';
 import Input from '../../components/elements/Input';
+import { styled } from 'solid-styled-components';
 
 export type Message = {
 	id: string;
@@ -16,32 +17,51 @@ export type Message = {
 	};
 };
 
+const MessagesContainer = styled('div')`
+	height: 30rem;
+	width: 20rem;
+	overflow: auto;
+	margin-right: auto;
+	margin-left: auto;
+`;
+
 type Props = {
 	messages: Message[];
 	onSendMessage: (message: string) => Promise<void>;
 };
 
 const Homepage: Component<Props> = (props) => {
+	let formRef: HTMLDivElement | undefined;
+	let messageRef: HTMLInputElement | undefined;
+
+
+	createEffect(() => {
+		if (!formRef || !props.messages.length) return;
+
+		formRef.scrollTop = formRef?.scrollHeight;
+	});
+
 	return (
 		<div>
 			<h1>Just-chat</h1>
-			<For each={props.messages} fallback={<div>Loading...</div>}>
-				{(message) => (
-					<>
-						<div>
+			<MessagesContainer ref={formRef}>
+				<For each={props.messages} fallback={<div>Loading...</div>}>
+					{(message) => (
+						<>
 							<div>
 								<div>
-									From: {`${message.user.firstName} ${message.user.lastName}`}
+									<div>
+										From: {`${message.user.firstName} ${message.user.lastName}`}
+									</div>
+									<div>When: {message.createdAt}</div>
+									<div>Message: {message.content}</div>
 								</div>
-								<div>When: {message.createdAt}</div>
-								<div>Message: {message.content}</div>
 							</div>
-						</div>{' '}
-						<br />
-					</>
-				)}
-			</For>
-
+							<br />
+						</>
+					)}
+				</For>
+			</MessagesContainer>
 			<div>
 				<Form
 					initialValues={{
@@ -53,11 +73,16 @@ const Homepage: Component<Props> = (props) => {
 					onSubmit={async (form) => {
 						try {
 							await props.onSendMessage(form.values.message);
+
+							if(!messageRef || !formRef) return
+
+							messageRef.value = '';
+							formRef.scrollTo(0, formRef.scrollHeight);
 						} catch (err) {
 							console.log('🚀 ~ onSubmit={ ~ err', err);
 						}
 					}}>
-					<Input name='message' label='Message' />
+					<Input name='message' label='Message' ref={messageRef} />
 					<button type='submit'>Send</button>
 				</Form>
 			</div>

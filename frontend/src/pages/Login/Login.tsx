@@ -1,3 +1,4 @@
+import { NavLink } from '@solidjs/router';
 import type { Component } from 'solid-js';
 import { Form } from 'solid-js-form';
 import { string } from 'yup';
@@ -29,6 +30,7 @@ const Login: Component<Props> = ({ onLogin }) => {
 				<Input name='password' label='Password' />
 				<button type='submit'>Login</button>
 			</Form>
+			<NavLink href='/registration'>Sign up</NavLink>
 		</div>
 	);
 };

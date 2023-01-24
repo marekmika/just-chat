@@ -5,11 +5,11 @@ type Props = {
 	name: string;
 	label: string;
 	type?: string;
+	ref?: HTMLInputElement;
 };
 
-const Input: Component<Props> = ({ name, label, type }) => {
+const Input: Component<Props> = ({ name, label, type, ref }) => {
 	const { field, form } = useField(name);
-	const formHandler = form.formHandler;
 
 	return (
 		<div>
@@ -21,6 +21,7 @@ const Input: Component<Props> = ({ name, label, type }) => {
 				name={name}
 				value={field.value() as string}
 				type={type}
+				ref={ref}
 				//@ts-ignore
 				use:formHandler //still need to properly type the handler
 			/>
